@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incentive Comparison</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #6dd5ed, #2193b0);
+            color: #0f0808;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #ffffffdd;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+        .container:hover {
+            transform: translateY(-5px);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+            color: #333;
+        }
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: #f1f1f1;
+            transition: background-color 0.3s ease;
+        }
+        select:focus, input[type="number"]:focus {
+            background-color: #e0f7fa;
+            outline: none;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .button:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+        }
+        .result {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .box {
+            flex: 1 1 45%;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: scale(0.95);
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .box h3 {
+            text-align: center;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .box p {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .vehicle-image {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .vehicle-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        @media (max-width: 768px) {
+            .result {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .box {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Incentive Comparison</h1>
+        <form id="comparisonForm">
+            <label for="vehicleType">Select Vehicle Type:</label>
+            <select id="vehicleType">
+                <option value="goods">Goods Carrier</option>
+            </select>
+
+            <label for="policyType">Select Policy Type:</label>
+            <select id="policyType">
+                <option value="new">New Vehicle</option>
+                <option value="package">Package Policy</option>
+                <option value="liability">Liability Policy</option>
+            </select>
+
+            <label for="vehiclegvw">Enter Vehicle GVW (in kg):</label>
+            <input type="number" id="vehiclegvw" min="0" required>
+
+            <button type="button" class="button" onclick="compareIncentives()">Compare</button>
+        </form>
+
+        <div class="error" id="error"></div>
+        <div class="result" id="result"></div>
+        <div class="vehicle-image" id="vehicleImage"></div>
+    </div>
+
+    <script>
+        function compareIncentives() {
+            const vehicleType = document.getElementById("vehicleType").value;
+            const policyType = document.getElementById("policyType").value;
+            const vehiclegvw = parseInt(document.getElementById("vehiclegvw").value);
+            const errorDiv = document.getElementById("error");
+            const resultDiv = document.getElementById("result");
+            const vehicleImageDiv = document.getElementById("vehicleImage");
+
+            errorDiv.textContent = "";
+            resultDiv.innerHTML = "";
+            vehicleImageDiv.innerHTML = "";
+
+            if (isNaN(vehiclegvw) || vehiclegvw < 0) {
+                errorDiv.textContent = "Please enter a valid vehicle GVW.";
+                return;
+            }
+
+            let company1Rates = "";
+            let company2Rates = "";
+            let imageFile = "";
+
+            if (vehicleType === "goods") {
+                if (policyType === "package") {
+                    if (vehiclegvw <= 2000) {
+                        company1Rates = "OD: 50%, TP: 40%";
+                        company2Rates = "OD: 45%, TP: 45%, INC: 10%";
+                    } else if (vehiclegvw >= 2001 && vehiclegvw <= 3500) {
+                        company1Rates = "OD: 35%, TP: 25%";
+                        company2Rates = "OD: 45%, TP: 45%, INC: 5%";
+                    } else if (vehiclegvw >= 3501 && vehiclegvw <= 7500) {
+                        company1Rates = "OD: 35%, TP: 25%";
+                        company2Rates = "OD: 25%, TP: 25%, INC: 5%";
+                    } else if (vehiclegvw >= 7501 && vehiclegvw <= 10000) {
+                        company1Rates = "scheme not available";
+                        company2Rates = "OD: 25%, TP: 25%, INC: 5%";
+                    } else {
+                        company1Rates = "No data available.";
+                        company2Rates = "No data available.";
+                    }
+                }
+                
+                else if (policyType === "liability") {
+                    if (vehiclegvw <= 2000) {
+                        company1Rates = "TP: 30%";
+                        company2Rates = "TP: 45%, INC: 10%";
+                    } else if (vehiclegvw >= 2001 && vehiclegvw <= 3500) {
+                        company1Rates = "TP: 15%";
+                        company2Rates = "TP: 45%, INC: 5%";
+                    } else if (vehiclegvw >= 3501 && vehiclegvw <= 7500) {
+                        company1Rates = "TP: 15% ";
+                        company2Rates = "TP: 45%, INC: 5%";
+                    } else if (vehiclegvw >= 7501 && vehiclegvw <= 10000) {
+                        company1Rates = "scheme not available";
+                        company2Rates = "OD: 25%, TP: 25%, INC: 5%";
+                    }else {
+                        company1Rates = "No data available.";
+                        company2Rates = "No data available.";
+                    }
+                } else if (policyType === "new") {
+                    if (vehiclegvw <= 2000){
+                        company1Rates = "OD: 55%, TP: 40%";
+                        company2Rates = "TP: 45%, INC: 10%";
+                    } else if (vehiclegvw >= 2001 && vehiclegvw <= 3500) {
+                        company1Rates = "OD: 40%, TP: 30%";
+                        company2Rates = "TP: 45%, INC: 5%";
+                    } else if (vehiclegvw >= 3501 && vehiclegvw <= 7500) {
+                        company1Rates = "OD: 40%, TP: 30% (scheme available up to GVW 7500)";
+                        company2Rates = "TP: 45%, INC: 5%";
+                    }else if (vehiclegvw >= 7501 && vehiclegvw <= 10000) {
+                        company1Rates = "scheme not available)";
+                        company2Rates = "TP: 45%, INC: 5%";
+
+
+                    }
+                    
+                } else {
+                    company1Rates = "No data available.";
+                    company2Rates = "No data available.";
+                }
+                imageFile = "goodsc.jpg"; // Provide your image in the same directory
+            } else {
+                company1Rates = "No data available.";
+                company2Rates = "No data available.";
+            }
+
+            displayResults(company1Rates, company2Rates);
+            if (imageFile) {
+                displayImage(imageFile);
+            }
+        }
+
+        function displayResults(company1, company2) {
+            document.getElementById("result").innerHTML = `
+                <div class="box">
+                    <h3>NEW INDIA</h3>
+                    <p>${company1}</p>
+                </div>
+                <div class="box">
+                    <h3>UNITED INDIA</h3>
+                    <p>${company2}</p>
+                </div>
+            `;
+        }
+
+        function displayImage(imageFile) {
+            document.getElementById("vehicleImage").innerHTML = `
+                <img src="${imageFile}" alt="Vehicle Image">
+            `;
+        }
+    </script>
+</body>
+</html>
